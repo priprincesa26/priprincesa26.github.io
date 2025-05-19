@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redações</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff4d8d;
+            --primary-light: #ff85b2;
+            --primary-dark: #e6005c;
+            --secondary-color: #ff9eb7;
+            --background-color: #fff0f5;
+            --card-color: #ffffff;
+            --text-color: #4a4a4a;
+            --border-color: #ffd6e7;
+            --shadow-color: rgba(255, 77, 141, 0.2);
+            
+            /* Cores de classificação */
+            --horrible-color: #6a1b9a;
+            --bad-color: #e63946;
+            --ok-color: #f4a261;
+            --good-color: #ffd166;
+            --excellent-color: #06d6a0;
+            --perfect-color: #118ab2;
+            
+            --danger-color: #d23369;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            background-image: radial-gradient(circle at 10% 20%, rgba(255,214,231,0.3) 0%, rgba(255,214,231,0) 90%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 6px 12px var(--shadow-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+            border-radius: 20px;
+            z-index: -1;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .add-redacao-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            font-size: 28px;
+            cursor: pointer;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            box-shadow: 0 6px 15px var(--shadow-color);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .add-redacao-btn:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 8px 20px rgba(230, 0, 92, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 35px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 550px;
+            box-shadow: 0 10px 25px var(--shadow-color);
+            position: relative;
+            border: 1px solid var(--border-color);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .modal-header h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-color);
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            transition: transform 0.2s;
+        }
+
+        .close-modal:hover {
+            transform: rotate(90deg);
+            color: var(--primary-dark);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: var(--primary-dark);
+            font-size: 1rem;
+        }
+
+        .form-group select, 
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+            background-color: rgba(255, 214, 231, 0.1);
+        }
+
+        .form-group select:focus, 
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 77, 141, 0.2);
+        }
+
+        .form-group textarea {
+            min-height: 180px;
+            resize: vertical;
+            line-height: 1.7;
+        }
+
+        .form-group input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .form-group input[type="number"]::-webkit-outer-spin-button,
+        .form-group input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .genero-fields {
+            display: none;
+        }
+
+        .genero-fields.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .nota-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .nota-option-btn {
+            flex: 1;
+            padding: 8px 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            background-color: white;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .nota-option-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .nota-option-btn:hover {
+            border-color: var(--primary-color);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            width: 100%;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px var(--shadow-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+            box-shadow: 0 6px 12px var(--shadow-color);
+            transform: translateY(-2px);
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #d23369, #a51a4a);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            margin-right: 10px;
+            box-shadow: 0 2px 5px rgba(210, 51, 105, 0.2);
+        }
+
+        .delete-btn:hover {
+            background: linear-gradient(135deg, #a51a4a, #d23369);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(210, 51, 105, 0.3);
+        }
+
+        .edit-btn {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px var(--shadow-color);
+        }
+
+        .edit-btn:hover {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow-color);
+        }
+
+        .view-btn {
+            background: linear-gradient(135deg, #6a8fd8, #4a6fa5);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            margin-right: 10px;
+            box-shadow: 0 2px 5px rgba(74, 111, 165, 0.2);
+        }
+
+        .view-btn:hover {
+            background: linear-gradient(135deg, #4a6fa5, #6a8fd8);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(74, 111, 165, 0.3);
+        }
+
+        /* LAYOUT DE 3 COLUNAS - IGUAL AOS SIMULADOS */
+        .redacoes-container {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .redacao-card {
+            background-color: var(--card-color);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            transition: all 0.4s ease;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .redacao-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary-color), var(--primary-light));
+        }
+
+        .redacao-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px var(--shadow-color);
+        }
+
+        .redacao-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .redacao-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .redacao-title::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+        }
+
+        .redacao-date {
+            font-size: 0.9rem;
+            color: #888;
+            background-color: rgba(255, 77, 141, 0.1);
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
+        .redacao-details {
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .redacao-info {
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .redacao-info span:first-child {
+            font-weight: 500;
+            color: #777;
+            font-size: 0.95rem;
+        }
+
+        .redacao-info span:last-child {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .performance-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .performance-text {
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 8px 15px;
+            border-radius: 25px;
+            display: inline-block;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .card-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: auto;
+            gap: 10px;
+        }
+
+        /* Modal de visualização da redação */
+        .view-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .view-modal-content {
+            background-color: white;
+            padding: 35px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 850px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px var(--shadow-color);
+            position: relative;
+            border: 1px solid var(--border-color);
+        }
+
+        .view-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .view-modal-header h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .close-view-modal {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-color);
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            transition: transform 0.2s;
+        }
+
+        .close-view-modal:hover {
+            transform: rotate(90deg);
+            color: var(--primary-dark);
+        }
+
+        .redacao-text-content {
+            white-space: pre-wrap;
+            line-height: 1.8;
+            font-size: 16px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: #fafafa;
+            border-radius: 8px;
+            border-left: 5px solid var(--primary-color);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .comentarios-container {
+            margin-top: 30px;
+            border-top: 2px solid var(--border-color);
+            padding-top: 25px;
+        }
+
+        .comentarios-container h3 {
+            margin-bottom: 20px;
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .comentarios-container h3::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+        }
+
+        .comentarios-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            resize: vertical;
+            margin-bottom: 20px;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.7;
+            background-color: rgba(255, 214, 231, 0.1);
+        }
+
+        .comentarios-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 77, 141, 0.2);
+        }
+
+        .save-comentarios-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px var(--shadow-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .save-comentarios-btn:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+            box-shadow: 0 6px 12px var(--shadow-color);
+            transform: translateY(-2px);
+        }
+
+        /* Cores de desempenho */
+        .horrible {
+            background: linear-gradient(135deg, var(--horrible-color), #4a148c);
+            color: white;
+        }
+
+        .bad {
+            background: linear-gradient(135deg, var(--bad-color), #c1121f);
+            color: white;
+        }
+
+        .ok {
+            background: linear-gradient(135deg, var(--ok-color), #e76f51);
+        }
+
+        .good {
+            background: linear-gradient(135deg, var(--good-color), #f4a261);
+        }
+
+        .excellent {
+            background: linear-gradient(135deg, var(--excellent-color), #06a789);
+            color: white;
+        }
+
+        .perfect {
+            background: linear-gradient(135deg, var(--perfect-color), #0a5c7a);
+            color: white;
+        }
+
+        .save-message {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            opacity: 0;
+            transition: all 0.4s;
+            z-index: 1000;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .save-message.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-10px);
+        }
+
+        /* Botões com ícones */
+        .btn-icon {
+            margin-right: 6px;
+        }
+
+        /* Estilo para quando não há redações */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            border: 2px dashed var(--border-color);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--primary-light);
+            opacity: 0.7;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto 20px;
+        }
+
+        @media (max-width: 1000px) {
+            .redacoes-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .redacoes-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content, .view-modal-content {
+                padding: 25px 20px;
+                width: 95%;
+            }
+            
+            .card-actions {
+                flex-wrap: wrap;
+            }
+            
+            .view-btn, .delete-btn, .edit-btn {
+                flex: 1;
+                margin-bottom: 10px;
+                margin-right: 0;
+            }
+            
+            .add-redacao-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Minhas Redações</h1>
+            <p>Acompanhe seu progresso e melhore suas habilidades de escrita</p>
+        </header>
+
+        <div class="redacoes-container" id="redacoesContainer">
+            <!-- As redações serão inseridas aqui pelo JavaScript -->
+        </div>
+
+        <button class="add-redacao-btn" id="addRedacaoBtn">
+            <i class="fas fa-plus"></i>
+        </button>
+
+        <!-- Modal para adicionar/editar redações -->
+        <div class="modal" id="addRedacaoModal">
+            <div class="modal-content">
+                <button class="close-modal" id="closeModal">&times;</button>
+                <div class="modal-header">
+                    <h2 id="modalTitle">Adicionar Redação</h2>
+                </div>
+                <form id="redacaoForm">
+                    <input type="hidden" id="redacaoId">
+                    <div class="form-group">
+                        <label for="redacaoDate">Data de realização</label>
+                        <input type="date" id="redacaoDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="redacaoVestibular">Vestibular</label>
+                        <select id="redacaoVestibular" required>
+                            <option value="">Selecione o vestibular...</option>
+                            <option value="Enem">ENEM</option>
+                            <option value="UFPR">UFPR</option>
+                            <option value="UEM">UEM</option>
+                            <option value="UEL">UEL</option>
+                            <option value="UEPG">UEPG</option>
+                            <option value="Unicentro">Unicentro</option>
+                            <option value="Unioeste">Unioeste</option>
+                            <option value="UFSM">UFSM</option>
+                        </select>
+                    </div>
+
+                    <!-- Campos de gênero (serão preenchidos dinamicamente) -->
+                    <div id="generoFields" class="form-group genero-fields">
+                        <label for="redacaoGenero">Gênero textual</label>
+                        <select id="redacaoGenero" required>
+                            <option value="">Selecione o gênero...</option>
+                        </select>
+                    </div>
+
+                    <!-- Campos de nota (serão preenchidos dinamicamente) -->
+                    <div id="notaFields" class="form-group">
+                        <label for="redacaoNota">Nota obtida</label>
+                        <div class="nota-options">
+                            <button type="button" class="nota-option-btn active" id="addNotaBtn">Com Nota</button>
+                            <button type="button" class="nota-option-btn" id="semNotaBtn">Sem Nota</button>
+                        </div>
+                        <input type="number" id="redacaoNota" min="0" placeholder="Digite a nota..." style="margin-top: 10px;">
+                        <small id="notaMaximaInfo" style="display: none; color: #666; margin-top: 5px;"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="redacaoTexto">Texto da Redação</label>
+                        <textarea id="redacaoTexto" required placeholder="Digite o texto completo da sua redação aqui..."></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <i class="fas fa-save btn-icon"></i> Salvar Redação
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal para visualizar a redação -->
+        <div class="view-modal" id="viewRedacaoModal">
+            <div class="view-modal-content">
+                <button class="close-view-modal" id="closeViewModal">&times;</button>
+                <div class="view-modal-header">
+                    <h2 id="viewModalTitle">Redação</h2>
+                </div>
+                <div class="redacao-info" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 25px;">
+                    <div><strong>Vestibular:</strong> <span id="viewVestibular"></span></div>
+                    <div><strong>Data:</strong> <span id="viewDate"></span></div>
+                    <div><strong>Gênero:</strong> <span id="viewGenero"></span></div>
+                    <div><strong>Nota:</strong> <span id="viewNota"></span></div>
+                </div>
+                <div class="performance-container">
+                    <div class="performance-text" id="viewPerformance"></div>
+                </div>
+                <h3 style="margin: 25px 0 15px; color: var(--primary-dark); position: relative; padding-left: 15px;">
+                    <span style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 8px; height: 8px; background-color: var(--primary-color); border-radius: 50%;"></span>
+                    Texto da Redação
+                </h3>
+                <div class="redacao-text-content" id="viewRedacaoTexto"></div>
+                
+                <div class="comentarios-container">
+                    <h3>Comentários e Anotações</h3>
+                    <textarea class="comentarios-textarea" id="viewComentarios" placeholder="Adicione seus comentários, correções, observações ou dicas para melhorar esta redação..."></textarea>
+                    <button class="save-comentarios-btn" id="saveComentariosBtn">
+                        <i class="fas fa-save btn-icon"></i> Salvar Comentários
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="save-message" id="saveMessage">
+            <i class="fas fa-check-circle"></i> Redação salva com sucesso!
+        </div>
+    </div>
+
+    <script>
+        // Array para armazenar as redações
+        let redacoes = JSON.parse(localStorage.getItem('redacoes')) || [];
+        let editingRedacaoId = null;
+        let currentViewingRedacaoId = null;
+        let notaOption = 'comNota'; // 'comNota' ou 'semNota'
+
+        // Configurações dos vestibulares
+        const vestibularesConfig = {
+            'Enem': {
+                generos: ['Dissertativo-argumentativo'],
+                notaMaxima: 1000
+            },
+            'UFPR': {
+                generos: ['Resumo', 'Dissertativa-argumentativo', 'Análise de charge', 'Análise de tira', 'Interpretação de infográfico', 'Narrativa', 'Carta', 'Discurso'],
+                notaMaxima: 60
+            },
+            'UEM': {
+                generos: ['Artigo de opinião', 'Carta aberta', 'Carta de solicitação', 'Resposta argumentativa', 'Comentário de rede social'],
+                notaMaxima: 120
+            },
+            'UEL': {
+                generos: ['Continuação de um texto', 'Resposta a uma pergunta', 'Análise de imagens', 'Interpretação de tirinhas', 'Textos narrativos'],
+                notaMaxima: 30
+            },
+            'UEPG': {
+                generos: ['Dissertativo-argumentativo', 'Artigo de opinião'],
+                notaMaxima: 1000
+            },
+            'Unicentro': {
+                generos: ['Dissertativo-argumentativo', 'Artigo de opinião'],
+                notaMaxima: 25
+            },
+            'Unioeste': {
+                generos: ['Artigo de opinião'],
+                notaMaxima: 60
+            },
+            'UFSM': {
+                generos: ['Artigo de opinião', 'Carta aberta'],
+                notaMaxima: 10
+            }
+        };
+
+        // Elementos do DOM
+        const addRedacaoBtn = document.getElementById('addRedacaoBtn');
+        const addRedacaoModal = document.getElementById('addRedacaoModal');
+        const closeModal = document.getElementById('closeModal');
+        const redacaoForm = document.getElementById('redacaoForm');
+        const redacaoVestibular = document.getElementById('redacaoVestibular');
+        const generoFields = document.getElementById('generoFields');
+        const redacaoGenero = document.getElementById('redacaoGenero');
+        const notaFields = document.getElementById('notaFields');
+        const redacaoNota = document.getElementById('redacaoNota');
+        const notaMaximaInfo = document.getElementById('notaMaximaInfo');
+        const redacoesContainer = document.getElementById('redacoesContainer');
+        const modalTitle = document.getElementById('modalTitle');
+        const submitBtn = document.getElementById('submitBtn');
+        const redacaoIdInput = document.getElementById('redacaoId');
+        const saveMessage = document.getElementById('saveMessage');
+        const addNotaBtn = document.getElementById('addNotaBtn');
+        const semNotaBtn = document.getElementById('semNotaBtn');
+
+        // Elementos do modal de visualização
+        const viewRedacaoModal = document.getElementById('viewRedacaoModal');
+        const closeViewModal = document.getElementById('closeViewModal');
+        const viewModalTitle = document.getElementById('viewModalTitle');
+        const viewVestibular = document.getElementById('viewVestibular');
+        const viewDate = document.getElementById('viewDate');
+        const viewGenero = document.getElementById('viewGenero');
+        const viewNota = document.getElementById('viewNota');
+        const viewPerformance = document.getElementById('viewPerformance');
+        const viewRedacaoTexto = document.getElementById('viewRedacaoTexto');
+        const viewComentarios = document.getElementById('viewComentarios');
+        const saveComentariosBtn = document.getElementById('saveComentariosBtn');
+
+        // Alternar entre adicionar com nota ou sem nota
+        addNotaBtn.addEventListener('click', () => {
+            notaOption = 'comNota';
+            addNotaBtn.classList.add('active');
+            semNotaBtn.classList.remove('active');
+            redacaoNota.style.display = 'block';
+            if (notaMaximaInfo.style.display !== 'none') {
+                notaMaximaInfo.style.display = 'block';
+            }
+        });
+
+        semNotaBtn.addEventListener('click', () => {
+            notaOption = 'semNota';
+            semNotaBtn.classList.add('active');
+            addNotaBtn.classList.remove('active');
+            redacaoNota.style.display = 'none';
+            notaMaximaInfo.style.display = 'none';
+        });
+
+        // Abrir modal ao clicar no botão +
+        addRedacaoBtn.addEventListener('click', () => {
+            editingRedacaoId = null;
+            modalTitle.textContent = 'Adicionar Redação';
+            submitBtn.innerHTML = '<i class="fas fa-save btn-icon"></i> Salvar Redação';
+            redacaoForm.reset();
+            generoFields.classList.remove('active');
+            redacaoNota.removeAttribute('max');
+            notaMaximaInfo.style.display = 'none';
+            notaOption = 'comNota';
+            addNotaBtn.classList.add('active');
+            semNotaBtn.classList.remove('active');
+            redacaoNota.style.display = 'block';
+            addRedacaoModal.style.display = 'flex';
+        });
+
+        // Fechar modal
+        closeModal.addEventListener('click', () => {
+            addRedacaoModal.style.display = 'none';
+        });
+
+        // Fechar modal ao clicar fora
+        window.addEventListener('click', (e) => {
+            if (e.target === addRedacaoModal) {
+                addRedacaoModal.style.display = 'none';
+            }
+            if (e.target === viewRedacaoModal) {
+                viewRedacaoModal.style.display = 'none';
+            }
+        });
+
+        // Fechar modal de visualização
+        closeViewModal.addEventListener('click', () => {
+            viewRedacaoModal.style.display = 'none';
+        });
+
+        // Salvar comentários
+        saveComentariosBtn.addEventListener('click', () => {
+            if (!currentViewingRedacaoId) return;
+            
+            const comentarios = viewComentarios.value;
+            const index = redacoes.findIndex(r => r.id === currentViewingRedacaoId);
+            
+            if (index !== -1) {
+                redacoes[index].comentarios = comentarios;
+                saveRedacoes();
+                showSaveMessage('Comentários salvos com sucesso!');
+            }
+        });
+
+        // Atualizar campos de gênero e nota quando o vestibular for selecionado
+        redacaoVestibular.addEventListener('change', (e) => {
+            const vestibular = e.target.value;
+            
+            if (vestibular) {
+                // Preencher gêneros
+                redacaoGenero.innerHTML = '<option value="">Selecione o gênero...</option>';
+                vestibularesConfig[vestibular].generos.forEach(genero => {
+                    const option = document.createElement('option');
+                    option.value = genero;
+                    option.textContent = genero;
+                    redacaoGenero.appendChild(option);
+                });
+                
+                // Configurar nota máxima
+                if (redacaoNota) {
+                    redacaoNota.setAttribute('max', vestibularesConfig[vestibular].notaMaxima);
+                    redacaoNota.placeholder = `0-${vestibularesConfig[vestibular].notaMaxima}`;
+                    notaMaximaInfo.textContent = `Nota máxima: ${vestibularesConfig[vestibular].notaMaxima}`;
+                    if (notaOption === 'comNota') {
+                        notaMaximaInfo.style.display = 'block';
+                    }
+                }
+                
+                generoFields.classList.add('active');
+            } else {
+                generoFields.classList.remove('active');
+                if (redacaoNota) {
+                    redacaoNota.removeAttribute('max');
+                    redacaoNota.placeholder = 'Digite a nota...';
+                    notaMaximaInfo.style.display = 'none';
+                }
+            }
+        });
+
+        // Adicionar ou editar redação
+        redacaoForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const vestibular = redacaoVestibular.value;
+            const date = document.getElementById('redacaoDate').value;
+            const genero = redacaoGenero.value;
+            const notaInput = notaOption === 'comNota' ? document.getElementById('redacaoNota').value : null;
+            const nota = notaInput ? parseFloat(notaInput) : null;
+            const texto = document.getElementById('redacaoTexto').value;
+            const notaMaxima = vestibularesConfig[vestibular]?.notaMaxima;
+
+            if (!vestibular || !date || !genero || !texto) {
+                alert('Preencha todos os campos obrigatórios!');
+                return;
+            }
+
+            if (notaOption === 'comNota' && (nota === null || isNaN(nota) || nota < 0 || (notaMaxima && nota > notaMaxima))) {
+                alert(`Insira uma nota válida${notaMaxima ? ` (0-${notaMaxima})` : ''}!`);
+                return;
+            }
+
+            if (editingRedacaoId) {
+                // Editar redação existente
+                const index = redacoes.findIndex(r => r.id === editingRedacaoId);
+                if (index !== -1) {
+                    // Manter os comentários existentes se houver
+                    const comentarios = redacoes[index].comentarios || '';
+                    
+                    redacoes[index] = {
+                        id: editingRedacaoId,
+                        vestibular,
+                        date,
+                        genero,
+                        nota: notaOption === 'comNota' ? nota : null,
+                        notaMaxima: notaOption === 'comNota' ? notaMaxima : null,
+                        texto,
+                        comentarios
+                    };
+                }
+            } else {
+                // Adicionar nova redação
+                const newRedacao = {
+                    id: Date.now(),
+                    vestibular,
+                    date,
+                    genero,
+                    nota: notaOption === 'comNota' ? nota : null,
+                    notaMaxima: notaOption === 'comNota' ? notaMaxima : null,
+                    texto,
+                    comentarios: ''
+                };
+                redacoes.push(newRedacao);
+            }
+
+            saveRedacoes();
+            renderRedacoes();
+            addRedacaoModal.style.display = 'none';
+            redacaoForm.reset();
+            generoFields.classList.remove('active');
+            showSaveMessage('Redação salva com sucesso!');
+        });
+
+        // Função para visualizar redação
+        function viewRedacao(id) {
+            const redacao = redacoes.find(r => r.id === id);
+            if (!redacao) return;
+
+            currentViewingRedacaoId = id;
+            viewModalTitle.textContent = `Redação - ${redacao.vestibular}`;
+            viewVestibular.textContent = redacao.vestibular;
+            viewDate.textContent = formatDate(redacao.date);
+            viewGenero.textContent = redacao.genero;
+            
+            const notaText = redacao.nota !== null ? `${redacao.nota}/${redacao.notaMaxima}` : 'Sem nota';
+            viewNota.textContent = notaText;
+            
+            if (redacao.nota !== null) {
+                const performanceClass = getPerformanceClass(redacao.nota, redacao.notaMaxima);
+                const performanceText = getPerformanceText(redacao.nota, redacao.notaMaxima);
+                viewPerformance.textContent = performanceText;
+                viewPerformance.className = `performance-text ${performanceClass}`;
+                viewPerformance.style.display = 'inline-block';
+            } else {
+                viewPerformance.style.display = 'none';
+            }
+            
+            viewRedacaoTexto.textContent = redacao.texto;
+            viewComentarios.value = redacao.comentarios || '';
+            viewRedacaoModal.style.display = 'flex';
+        }
+
+        // Função para editar redação
+        function editRedacao(id) {
+            const redacao = redacoes.find(r => r.id === id);
+            if (!redacao) return;
+
+            editingRedacaoId = id;
+            modalTitle.textContent = 'Editar Redação';
+            submitBtn.innerHTML = '<i class="fas fa-save btn-icon"></i> Salvar Alterações';
+
+            document.getElementById('redacaoDate').value = redacao.date;
+            document.getElementById('redacaoVestibular').value = redacao.vestibular;
+            
+            // Disparar evento change para preencher gêneros
+            const event = new Event('change');
+            redacaoVestibular.dispatchEvent(event);
+            
+            document.getElementById('redacaoGenero').value = redacao.genero;
+            document.getElementById('redacaoTexto').value = redacao.texto;
+            redacaoIdInput.value = redacao.id;
+            
+            if (redacao.nota !== null) {
+                document.getElementById('redacaoNota').value = redacao.nota;
+                notaOption = 'comNota';
+                addNotaBtn.classList.add('active');
+                semNotaBtn.classList.remove('active');
+                redacaoNota.style.display = 'block';
+                notaMaximaInfo.style.display = 'block';
+            } else {
+                document.getElementById('redacaoNota').value = '';
+                notaOption = 'semNota';
+                semNotaBtn.classList.add('active');
+                addNotaBtn.classList.remove('active');
+                redacaoNota.style.display = 'none';
+                notaMaximaInfo.style.display = 'none';
+            }
+
+            generoFields.classList.add('active');
+            addRedacaoModal.style.display = 'flex';
+        }
+
+        // Função para excluir redação
+        function deleteRedacao(id) {
+            if (confirm('Tem certeza que deseja excluir esta redação?')) {
+                redacoes = redacoes.filter(r => r.id !== id);
+                saveRedacoes();
+                renderRedacoes();
+                showSaveMessage('Redação excluída com sucesso!');
+            }
+        }
+
+        // Salvar redações no localStorage
+        function saveRedacoes() {
+            localStorage.setItem('redacoes', JSON.stringify(redacoes));
+        }
+
+        // Mostrar mensagem de salvamento
+        function showSaveMessage(message = 'Operação realizada com sucesso!') {
+            saveMessage.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+            saveMessage.classList.add('show');
+            setTimeout(() => {
+                saveMessage.classList.remove('show');
+            }, 3000);
+        }
+
+        // Determinar a classificação de desempenho
+        function getPerformanceClass(nota, notaMaxima) {
+            if (nota === null || notaMaxima === null) return '';
+            const percentual = (nota / notaMaxima) * 100;
+            
+            if (percentual <= 40) return 'horrible';
+            if (percentual <= 60) return 'bad';
+            if (percentual <= 70) return 'ok';
+            if (percentual <= 80) return 'good';
+            if (percentual <= 90) return 'excellent';
+            return 'perfect';
+        }
+
+        // Determinar o texto de desempenho
+        function getPerformanceText(nota, notaMaxima) {
+            if (nota === null || notaMaxima === null) return 'Sem nota';
+            const percentual = (nota / notaMaxima) * 100;
+            
+            if (percentual <= 40) return 'Horrível';
+            if (percentual <= 60) return 'Ruim';
+            if (percentual <= 70) return 'Ok';
+            if (percentual <= 80) return 'Bom';
+            if (percentual <= 90) return 'Excelente';
+            return 'Perfeito';
+        }
+
+        // Formatar data
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR');
+        }
+
+        // Renderizar todas as redações (AGORA COM LAYOUT IGUAL AOS SIMULADOS)
+        function renderRedacoes() {
+            redacoesContainer.innerHTML = '';
+
+            if (redacoes.length === 0) {
+                redacoesContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-pen-fancy"></i>
+                        <h3>Nenhuma redação cadastrada</h3>
+                        <p>Você ainda não adicionou nenhuma redação. Clique no botão "+" abaixo para começar!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Ordenar redações por data (mais recente primeiro)
+            redacoes.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            redacoes.forEach(redacao => {
+                const card = document.createElement('div');
+                card.className = 'redacao-card';
+
+                // Determinar classe de desempenho
+                const performanceClass = getPerformanceClass(redacao.nota, redacao.notaMaxima);
+                const performanceText = getPerformanceText(redacao.nota, redacao.notaMaxima);
+                const notaText = redacao.nota !== null ? `${redacao.nota}/${redacao.notaMaxima}` : 'Sem nota';
+
+                card.innerHTML = `
+                    <div class="redacao-header">
+                        <div class="redacao-title">${redacao.vestibular}</div>
+                        <div class="redacao-date">${formatDate(redacao.date)}</div>
+                    </div>
+                    <div class="redacao-details">
+                        <div class="redacao-info">
+                            <span>Gênero:</span>
+                            <span>${redacao.genero}</span>
+                        </div>
+                        <div class="redacao-info">
+                            <span>Nota:</span>
+                            <span>${notaText}</span>
+                        </div>
+                    </div>
+                    ${redacao.nota !== null ? `
+                        <div class="performance-container">
+                            <div class="performance-text ${performanceClass}">${performanceText}</div>
+                        </div>
+                    ` : ''}
+                    <div class="card-actions">
+                        <button class="view-btn" onclick="viewRedacao(${redacao.id})">
+                            <i class="fas fa-eye btn-icon"></i> Visualizar
+                        </button>
+                        <button class="delete-btn" onclick="deleteRedacao(${redacao.id})">
+                            <i class="fas fa-trash btn-icon"></i> Excluir
+                        </button>
+                        <button class="edit-btn" onclick="editRedacao(${redacao.id})">
+                            <i class="fas fa-edit btn-icon"></i> Editar
+                        </button>
+                    </div>
+                `;
+
+                redacoesContainer.appendChild(card);
+            });
+        }
+
+        // Inicializar a aplicação
+        function init() {
+            renderRedacoes();
+        }
+
+        // Carregar a aplicação quando a página estiver pronta
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
